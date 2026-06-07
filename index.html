@@ -143,7 +143,7 @@
 
   <script>
     (function() {
-      // Create vine sunflowers
+      // Vine sunflowers
       var vc = document.getElementById('vineContainer');
       var positions = [
         {left:'22px',top:'18%',delay:'0.5s',size:'2rem'},{left:'48px',top:'35%',delay:'0.9s',size:'2.4rem'},
@@ -164,24 +164,6 @@
         vc.appendChild(s);
         setTimeout(function(){ s.classList.add('pulse'); }, parseFloat(p.delay)*1000+2000);
       });
-
-      // Simple emoji confetti
-      function partyConfetti(count, spread, colors) {
-        count = count || 80;
-        spread = spread || 60;
-        colors = colors || ['#ffb347','#f28482','#f9c74f','#ff6b6b'];
-        for(var i=0;i<count;i++){
-          var el=document.createElement('div');
-          el.style.cssText='position:fixed;z-index:9999;pointer-events:none;left:50%;top:50%;font-size:'+(Math.random()*20+15)+'px;opacity:1;transition:all '+(Math.random()*2+1)+'s ease-out;';
-          el.textContent=['🎉','✨','🌟','💫','🎊','🎂','💖','🌸','🎈','🎁'][Math.floor(Math.random()*10)];
-          el.style.color=colors[Math.floor(Math.random()*colors.length)];
-          document.body.appendChild(el);
-          var l=50+(Math.random()-0.5)*spread;
-          var t=Math.random()*60+20;
-          setTimeout(function(){el.style.left=l+'%';el.style.top=t+'%';el.style.opacity='0';},30);
-          setTimeout(function(){el.remove();},3000);
-        }
-      }
 
       // Countdown
       var co = document.getElementById('countdownOverlay');
@@ -221,15 +203,9 @@
         bt.classList.add('done');
         sm.classList.add('visible');
         setTimeout(function(){ sm.classList.remove('visible'); }, 2000);
-        
-        partyConfetti(80, 60, ['#ffb347','#f28482','#f9c74f','#ff6b6b','#ffd93d']);
-        
         setTimeout(function() {
           cp.classList.add('hidden');
-          setTimeout(function() {
-            bp.classList.add('show');
-            partyConfetti(120, 80, ['#ffb347','#f28482','#f9c74f','#ff6b6b','#ffd93d','#ffab76']);
-          }, 500);
+          setTimeout(function() { bp.classList.add('show'); }, 500);
         }, 1200);
       });
 
@@ -244,18 +220,6 @@
       });
 
       // Floating hearts
-      function createHeart(x, y) {
-        var d = document.createElement('div');
-        d.className = 'heart';
-        var emojis = ['❤️','💖','💗','🎂','🎉','✨','🌸','💕','🎈'];
-        d.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-        d.style.left = x + 'px';
-        d.style.top = y + 'px';
-        d.style.fontSize = (Math.random()*20+20) + 'px';
-        document.body.appendChild(d);
-        setTimeout(function(){ d.remove(); }, 4000);
-      }
-
       setInterval(function() {
         var d = document.createElement('div');
         d.className = 'heart';
@@ -274,58 +238,34 @@
       var ctx = canvas.getContext('2d');
       var w, h, particles = [], animId = null, active = false;
       
-      function resize() {
-        w = window.innerWidth;
-        h = window.innerHeight;
-        canvas.width = w;
-        canvas.height = h;
-      }
-      window.addEventListener('resize', resize);
-      resize();
+      function resize() { w = window.innerWidth; h = window.innerHeight; canvas.width = w; canvas.height = h; }
+      window.addEventListener('resize', resize); resize();
 
       function Particle(x, y, type) {
-        this.x = x;
-        this.y = y;
-        this.type = type;
+        this.x = x; this.y = y; this.type = type;
         this.angle = Math.random() * Math.PI * 2;
         this.speed = 3 + Math.random() * 9;
         this.size = type === 'center' ? 3 + Math.random() * 6 : 6 + Math.random() * 14;
-        this.alpha = 1;
-        this.gravity = 0.05;
-        this.vy = (Math.random() - 0.5) * 2;
-        this.vx = (Math.random() - 0.5) * 2;
+        this.alpha = 1; this.gravity = 0.05;
+        this.vy = (Math.random() - 0.5) * 2; this.vx = (Math.random() - 0.5) * 2;
         this.rotation = Math.random() * Math.PI * 2;
         this.rotSpeed = (Math.random() - 0.5) * 0.2;
         this.color = type === 'center' ? '#4A2C0A' : ['#FFD166','#F4A261','#E9C46A','#FFB347','#FFC300','#F9A826','#FFAA33'][Math.floor(Math.random()*7)];
       }
-
       Particle.prototype.update = function() {
-        this.x += Math.cos(this.angle) * this.speed * 0.4 + this.vx;
-        this.y += Math.sin(this.angle) * this.speed * 0.4 + this.vy;
-        this.vy += this.gravity;
-        this.speed *= 0.96;
-        this.alpha -= 0.005;
-        this.rotation += this.rotSpeed;
+        this.x += Math.cos(this.angle)*this.speed*0.4 + this.vx;
+        this.y += Math.sin(this.angle)*this.speed*0.4 + this.vy;
+        this.vy += this.gravity; this.speed *= 0.96; this.alpha -= 0.005; this.rotation += this.rotSpeed;
       };
-
       Particle.prototype.draw = function(c) {
         if(this.alpha <= 0) return;
-        c.save();
-        c.translate(this.x, this.y);
-        c.rotate(this.rotation);
-        c.globalAlpha = this.alpha;
+        c.save(); c.translate(this.x, this.y); c.rotate(this.rotation); c.globalAlpha = this.alpha;
         if(this.type === 'petal') {
-          c.fillStyle = this.color;
-          c.beginPath();
-          c.ellipse(0, -this.size*0.4, this.size*0.3, this.size*0.75, 0, 0, Math.PI*2);
-          c.fill();
+          c.fillStyle = this.color; c.beginPath();
+          c.ellipse(0, -this.size*0.4, this.size*0.3, this.size*0.75, 0, 0, Math.PI*2); c.fill();
         } else {
-          c.fillStyle = this.color;
-          c.shadowColor = '#FFB703';
-          c.shadowBlur = 8;
-          c.beginPath();
-          c.arc(0, 0, this.size*0.5, 0, Math.PI*2);
-          c.fill();
+          c.fillStyle = this.color; c.shadowColor = '#FFB703'; c.shadowBlur = 8;
+          c.beginPath(); c.arc(0, 0, this.size*0.5, 0, Math.PI*2); c.fill();
         }
         c.restore();
       };
@@ -334,62 +274,37 @@
         for(var i=0;i<55;i++) particles.push(new Particle(x,y,'petal'));
         for(var j=0;j<22;j++) particles.push(new Particle(x,y,'center'));
       }
-
       function animateCanvas() {
         if(!active) return;
         ctx.clearRect(0,0,w,h);
         particles = particles.filter(function(p){ return p.alpha > 0.005; });
-        for(var i=0;i<particles.length;i++) {
-          particles[i].update();
-          particles[i].draw(ctx);
-        }
+        for(var i=0;i<particles.length;i++) { particles[i].update(); particles[i].draw(ctx); }
         if(particles.length === 0) { active = false; return; }
         animId = requestAnimationFrame(animateCanvas);
       }
-
       function launchFireworks() {
         if(animId) { cancelAnimationFrame(animId); animId = null; }
-        active = false;
-        particles = [];
-        ctx.clearRect(0,0,w,h);
-        resize();
-        var positions = [
-          {x:w*0.2,y:h*0.3},{x:w*0.5,y:h*0.2},{x:w*0.8,y:h*0.3},{x:w*0.3,y:h*0.5},
-          {x:w*0.7,y:h*0.5},{x:w*0.5,y:h*0.4},{x:w*0.4,y:h*0.25},{x:w*0.6,y:h*0.25}
-        ];
-        positions.forEach(function(p,i) {
-          setTimeout(function(){ createBurst(p.x,p.y); }, i*150);
-        });
-        active = true;
-        animateCanvas();
+        active = false; particles = []; ctx.clearRect(0,0,w,h); resize();
+        var pos = [{x:w*0.2,y:h*0.3},{x:w*0.5,y:h*0.2},{x:w*0.8,y:h*0.3},{x:w*0.3,y:h*0.5},{x:w*0.7,y:h*0.5},{x:w*0.5,y:h*0.4},{x:w*0.4,y:h*0.25},{x:w*0.6,y:h*0.25}];
+        pos.forEach(function(p,i){ setTimeout(function(){ createBurst(p.x,p.y); }, i*150); });
+        active = true; animateCanvas();
       }
 
-      document.getElementById('sunflowerFireworksBtn').addEventListener('click', function() {
-        launchFireworks();
-        setTimeout(function() {
-          partyConfetti(150, 100, ['#FFD166','#F4A261','#E9C46A','#FFB347','#FFC300']);
-        }, 600);
-      });
+      document.getElementById('sunflowerFireworksBtn').addEventListener('click', launchFireworks);
 
       window.addEventListener('click', function(e) {
         if(e.target.closest('button') || e.target.closest('.candle-wrapper')) return;
         createBurst(e.clientX, e.clientY);
         if(!active) { active = true; animateCanvas(); }
-        createHeart(e.clientX, e.clientY);
       });
-
       window.addEventListener('touchstart', function(e) {
         if(e.touches && e.touches[0]) {
           var t = e.touches[0];
           if(t.target.closest('button') || t.target.closest('.candle-wrapper')) return;
           createBurst(t.clientX, t.clientY);
           if(!active) { active = true; animateCanvas(); }
-          createHeart(t.clientX, t.clientY);
         }
       });
-
-      console.log("%c✨ Happy Birthday to YOU! ✨","color:#ff8c5a;font-size:20px;font-weight:bold;");
-      console.log("%c❤️ May all your wishes come true ❤️","color:#ff4d6d;font-size:16px");
     })();
   </script>
 </body>
