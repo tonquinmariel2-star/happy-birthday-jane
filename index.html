@@ -86,7 +86,23 @@
     @keyframes floatUpLove { 0%{transform:translateY(0) rotate(0deg);opacity:1}80%{opacity:0.6}100%{transform:translateY(-800px) rotate(20deg);opacity:0} }
     canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
     .music-tip { position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.5); color: #ffecb3; padding: 6px 12px; border-radius: 30px; font-size: 12px; backdrop-filter: blur(4px); z-index: 30; font-family: monospace; }
-    @media (max-width:450px){.main-card{padding:1.5rem 1rem;border-radius:2.5rem}.photo-frame{width:90px;height:90px;border-radius:18px}.photo-frame img{border-radius:15px}.greeting-title{font-size:1.5rem}.sunflower-vine{font-size:1.5rem}}
+    
+    /* Music Button Style */
+    .music-btn {
+      position: fixed; bottom: 55px; right: 20px; z-index: 999;
+      background: #ff9f4a; color: white; border: none;
+      padding: 10px 18px; border-radius: 30px; font-size: 14px;
+      cursor: pointer; font-weight: bold; font-family: 'Segoe UI', sans-serif;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;
+    }
+    .music-btn:hover { background: #ffb347; transform: translateY(-2px); }
+    .music-btn.playing { background: #f28482; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 4px 15px rgba(0,0,0,0.3)}50%{box-shadow:0 4px 25px rgba(242,132,130,0.7)} }
+
+    @media (max-width:450px){
+      .main-card{padding:1.5rem 1rem;border-radius:2.5rem}.photo-frame{width:90px;height:90px;border-radius:18px}.photo-frame img{border-radius:15px}.greeting-title{font-size:1.5rem}.sunflower-vine{font-size:1.5rem}
+      .music-btn { bottom: 50px; right: 10px; padding: 8px 14px; font-size: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -139,7 +155,13 @@
     </div>
     <button class="fireworks-launch-btn" id="sunflowerFireworksBtn">🌻 Launch Sunflower Fireworks! 🌻</button>
   </div>
-  <div class="music-tip">🎵 Tip: Play "Happy Birthday" song in the background 🎵</div>
+
+  <!-- 🎵 Music Player -->
+    <!-- 🎵 Music Player -->
+  <audio id="bgMusic" loop>
+    <source src="https://www.myinstants.com/media/sounds/happy-birthday-song.mp3" type="audio/mpeg">
+  </audio>
+  <button class="music-btn" id="musicBtn">🎵 Play Music</button>
 
   <script>
     (function() {
@@ -164,6 +186,33 @@
         vc.appendChild(s);
         setTimeout(function(){ s.classList.add('pulse'); }, parseFloat(p.delay)*1000+2000);
       });
+
+      // 🎵 Music
+      var music = document.getElementById('bgMusic');
+      var musicBtn = document.getElementById('musicBtn');
+      music.volume = 0.5;
+
+      musicBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if(music.paused) {
+          music.play();
+          musicBtn.textContent = '🎵 Playing...';
+          musicBtn.classList.add('playing');
+        } else {
+          music.pause();
+          musicBtn.textContent = '🎵 Play Music';
+          musicBtn.classList.remove('playing');
+        }
+      });
+
+      document.addEventListener('click', function startMusic() {
+        if(music.paused) {
+          music.play().then(function() {
+            musicBtn.textContent = '🎵 Playing...';
+            musicBtn.classList.add('playing');
+          }).catch(function(){});
+        }
+      }, { once: true });
 
       // Countdown
       var co = document.getElementById('countdownOverlay');
